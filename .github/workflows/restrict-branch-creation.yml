@@ -1,0 +1,27 @@
+name: Restrict Branch Creation
+
+on:
+  create:
+    branches:
+      - '*'
+
+jobs:
+  restrict_branch_creation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Branch Name and Source
+        id: check_branch_name_and_source
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branchName = context.payload.ref;
+            const sourceBranch = context.payload.ref_type === 'branch' ? context.payload.master_branch : null;
+            
+            // Regular expression to match conventional branch names
+            const branchPattern = /^(feature|fix|docs)\/.+/;
+            const isConventional = branchPattern.test(branchName);
+            
+            if (!isConventional || sourceBranch !== 'develop') {
+              core.setFailed('Branch name or source branch is invalid.');
+            }
