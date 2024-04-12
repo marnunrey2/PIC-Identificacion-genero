@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import cv2
+from .mtImShow import mtImShow
 
 
 def mtShowCaseBifs(title_text, image, bifs, zoom_rows, zoom_cols):
@@ -35,30 +37,21 @@ def mtShowCaseBifs(title_text, image, bifs, zoom_rows, zoom_cols):
     Y = [y_min, y_max, y_max, y_min, y_min]
 
     # Show test image
-    plt.subplot(2, 2, 1)
+    plt.subplot(1, 2, 1)
     num_dims = len(image.shape)
     if num_dims == 2:
         # Convert greyscale image to RGB image
-        plt.imshow(image, cmap="gray")
-    else:
-        plt.imshow(image)
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
+    plt.imshow(image)
     plt.plot(X, Y, color=[0, 1, 1])
     plt.xlabel("Test image")
 
     # Show BIF classes for whole image
-    plt.subplot(2, 2, 2)
-    bifs.show(0)
+    plt.subplot(1, 2, 2)
+    bif_image = bifs.show()
+    plt.imshow(bif_image)
     plt.plot(X, Y, color=[0, 1, 1])
     plt.xlabel("BIF class for all pixels")
-
-    # Show image for zoomed pixel(s)
-    plt.subplot(2, 2, 3)
-    plt.imshow(image[zoom_rows, zoom_cols, :])
-    plt.xlabel("Image for zoomed area")
-
-    # Show BIF classes and orientation for zoomed pixel(s)
-    plt.subplot(2, 2, 4)
-    bifs.get_snippet(zoom_rows, zoom_cols).show(1)
-    plt.xlabel("BIF class and orientation\nfor zoomed area")
 
     plt.show()

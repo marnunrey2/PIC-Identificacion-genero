@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import convolve2d
 
 
-def mtSeparableFilter2(xFilter, yFilter, input, mode="same"):
+def mtSeparableFilter2(xFilter, yFilter, input, mode="mirror"):
     """
     mtSeparableFilter2
     Performs 2D filtering of a 2D matrix input by a separable 2D filter by
@@ -34,34 +34,27 @@ def mtSeparableFilter2(xFilter, yFilter, input, mode="same"):
     if len(xFilter) % 2 == 0 or len(yFilter) % 2 == 0:
         raise ValueError("x and y filters must be of odd length")
 
-    # Ensure x is a row vector and y is a column vector
-    xFilter = xFilter.reshape(1, -1)
-    yFilter = yFilter.reshape(-1, 1)
-
-    if mode == "cyclic":
-        # If cyclic mode selected, extend image in x (for x filter pass) and y
-        # (for y filter pass) and fill extended padding with pixels from opposite
-        # side of image.
-        xPad = (len(xFilter) - 1) // 2
-        yPad = (len(yFilter) - 1) // 2
-        xPadded = np.hstack([input[:, -xPad:], input, input[:, :xPad]])
-        yPadded = np.vstack([xPadded[-yPad:, :], xPadded, xPadded[:yPad, :]])
-        output = convolve2d(yPadded, yFilter, mode="valid")
-
-    elif mode == "mirror":
+    if mode == "mirror":
         # If mirror mode selected, extend image in x (for x filter pass) and y
         # (for y filter pass) and fill extended padding with reflected boundary
         # pixels.
         xPad = (len(xFilter) - 1) // 2
         yPad = (len(yFilter) - 1) // 2
-        xPadded = np.hstack([input[:, xPad:0:-1], input, input[:, -2 : -xPad - 2 : -1]])
-        yPadded = np.vstack(
-            [xPadded[yPad:0:-1, :], xPadded, xPadded[-2 : -yPad - 2 : -1, :]]
-        )
-        output = convolve2d(yPadded, yFilter, mode="valid")
+
+        # Pad the input array along columns (x direction)
+        input_padded_x = np.pad(input, ((0, 0), (xPad, xPad)), mode="reflect")
+        # Perform 1D convolution along the columns (x direction)
+        xOut = convolve2d(input_padded_x, np.transpose([xFilter]), mode="valid")
+
+        # Pad the xOut array along rows (y direction)
+        input_padded_y = np.pad(xOut, ((yPad, yPad), (0, 0)), mode="reflect")
+        # Perform 1D convolution along the rows (y direction)
+        output = convolve2d(input_padded_y, [yFilter], mode="valid")
 
     else:
         # Otherwise, just apply convolve2d for x and y filters, passing selected mode
-        output = convolve2d(convolve2d(input, xFilter, mode=mode), yFilter, mode=mode)
+        output = convolve2d(
+            convolve2d(input, np.transpose([xFilter]), mode=mode), [yFilter], mode=mode
+        )
 
     return output

@@ -17,12 +17,9 @@ def mtDemoBifLab():
     if im is None:
         print(f"Failed to load image ")
         return
-    print(im)
     im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
-    bifs = mtBifs(im, 2, 0.015)  # Assuming mtBifs function is defined elsewhere
-    mtShowCaseBifs(
-        "car", im, bifs, np.arange(95, 121), np.arange(95, 121)
-    )  # Assuming mtShowCaseBifs function is defined elsewhere
+    bifs = mtBifs(im, 2, 0.015)
+    mtShowCaseBifs("car", im, bifs, range(95, 121), range(95, 121))
 
 
 # Example usage

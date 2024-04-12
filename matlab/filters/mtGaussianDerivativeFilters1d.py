@@ -21,6 +21,9 @@ def mtGaussianDerivativeFilters1d(sigma):
     Usage: s0, s1, s2 = mtGaussianDerivativeFilters1d(sigma)
     """
 
+    # Force numeric parameters to be float to avoid errors
+    sigma = float(sigma)
+
     # Internal parameters
     # scaleFactor: Number of bins in higher resolution filter for each bin in
     # original resolution filter
@@ -38,14 +41,10 @@ def mtGaussianDerivativeFilters1d(sigma):
     s0HighRes = mtGaussianDerivativeFilter1d_s0(xHighRes, sigma)
     s0 = mtDownsampleFilter(s0HighRes, scaleFactor)
     # First-order filter
-    s1 = None
-    if True:  # Assuming always compute first-order filter
-        s1R = mtGaussianDerivativeFilter1d_s1(xHighRes, sigma)
-        s1 = mtDownsampleFilter(s1R, scaleFactor)
+    s1R = mtGaussianDerivativeFilter1d_s1(xHighRes, sigma)
+    s1 = mtDownsampleFilter(s1R, scaleFactor)
     # Second-order filter
-    s2 = None
-    if True:  # Assuming always compute second-order filter
-        s2R = mtGaussianDerivativeFilter1d_s2(xHighRes, sigma)
-        s2 = mtDownsampleFilter(s2R, scaleFactor)
+    s2R = mtGaussianDerivativeFilter1d_s2(xHighRes, sigma)
+    s2 = mtDownsampleFilter(s2R, scaleFactor)
 
     return s0, s1, s2

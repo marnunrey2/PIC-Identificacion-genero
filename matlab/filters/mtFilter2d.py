@@ -33,12 +33,12 @@ def mtFilter2d(xyFilter, input, mode, method="conv2"):
 
     Usage: output = mtFilter2d(xyFilter, input, mode, method)
     """
-    if method is None:
-        method = "conv2"
+    if method not in ["conv2", "convolve2", "convnfft"]:
+        raise ValueError("Invalid method argument.")
 
     height, width = xyFilter.shape
     # check filter is odd in both dimensions (therefore has a centre pixel)
-    if not np.all([width % 2 == 1, height % 2 == 1]):
+    if (width % 2 != 1) or (height % 2 != 1):
         raise ValueError("filter must have dimensions of odd length")
 
     xPad = (width - 1) // 2
@@ -57,20 +57,18 @@ def mtFilter2d(xyFilter, input, mode, method="conv2"):
         # If mirror mode selected, extend image in x and y  and fill extended padding
         # with reflected boundary pixels. Using filter2 in 'valid' mode on the padded
         # image returns an output with the same dimensions as the unpadded input image.
-        input = np.hstack([input[:, xPad:0:-1], input, input[:, -2 : -xPad - 2 : -1]])
-        input = np.vstack([input[yPad:0:-1, :], input, input[-2 : -yPad - 2 : -1, :]])
+        input = np.hstack([input[:, xPad:0:-1], input, input[:, -1 : -xPad - 1 : -1]])
+        input = np.vstack([input[yPad:0:-1, :], input, input[-1 : -yPad - 1 : -1, :]])
     elif mode.lower() == "padded":
         postPadNans = True
 
     # Perform correlation by flipping filter and doing convolution
     if method.lower() == "conv2":
-        output = convolve2d(input, np.flip(xyFilter, axis=(0, 1)), mode=rawMode)
-    elif method.lower() == "convolve2":
-        raise NotImplementedError("The 'convolve2' method is not implemented in SciPy.")
-    elif method.lower() == "convnfft":
-        raise NotImplementedError("The 'convnfft' method is not implemented in SciPy.")
+        output = convolve2d(input, xyFilter[::-1, ::-1], mode=rawMode)
     else:
-        raise ValueError("Invalid method argument.")
+        raise NotImplementedError(
+            "Other convolution methods are not implemented in SciPy."
+        )
 
     if postPadNans:
         xPadStrip = np.full((output.shape[0], xPad), np.nan)

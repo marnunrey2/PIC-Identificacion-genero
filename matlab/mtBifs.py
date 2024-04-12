@@ -3,13 +3,14 @@ import cv2
 import matplotlib.pyplot as plt
 from filters.mtGaussianDerivativeFilters1d import mtGaussianDerivativeFilters1d
 from filters.mtFilter2d import mtFilter2d
+from filters.mtSeparableFilter2 import mtSeparableFilter2
 
 
 class mtBifs:
     def __init__(self, inputImage, blurWidth, flatnessThreshold):
         # Convert color image to grayscale if needed
         if len(inputImage.shape) == 3:
-            inputImage = cv2.cvtColor(inputImage, cv2.COLOR_BGR2GRAY)
+            inputImage = cv2.cvtColor(inputImage, cv2.COLOR_RGB2GRAY)
 
         # Rename input parameters to terms used in BIF papers
         # Force numeric parameters to be floats to avoid mixing integers and floats
@@ -31,6 +32,25 @@ class mtBifs:
 
     @staticmethod
     def colourMap():
+        # Generates colour map for use when displaying BIFs
+        #
+        # OUTPUTS:
+        # colourMap: Follows the format of built-in Matlab colour maps. Row N+1 defines
+        #            the RGB colour to display for matrix elements with value N. Colours
+        #            as per the BIF journal papers from Crosier and Griffin with the
+        #            addition of mapping for value 0 in row 1. This is not a valid BIF
+        #            class but is required for a valid colour map.
+        #               0 = invalid (cyan)
+        #               1 = falt (pink)
+        #               2 = gradient (grey)
+        #               3 = dark blob (black)
+        #               4 = light blob (white)
+        #               5 = dark line (blue)
+        #               6 = light line (yellow)
+        #               7 = saddle (green)
+        #
+        # USAGE: colourMap = mtBifs.colourMap()
+
         # Define color map for displaying BIFs
         bif_cyan = [0, 0.5, 0.5]
         bif_pink = [1, 0.7, 0.7]
@@ -68,7 +88,6 @@ class mtBifs:
 
         # Show BIF classes with colour map
         bifImage = bifMap[bifClasses]
-        plt.imshow(bifImage)
 
         # Add direction marks if requested
         if showOrientation:
@@ -88,8 +107,7 @@ class mtBifs:
                         self.Vy[r, c],
                     )
 
-        plt.axis("off")
-        plt.show()
+        return bifImage
 
     def get_snippet(self, rows, cols):
         # Creates new BIF object with BIF data for specified rows and columns
@@ -161,37 +179,28 @@ class mtBifs:
 
     @staticmethod
     def dtgFilterResponsesFromImage(inputImage, sigma):
-        # Generate filter responses
+        # Generate the 1D Gaussian Derivative filters used to calculate BIFs
+        # s0 = zeroth order 1D filter
+        # s1 = first-order 1D filter
+        # s2 = second-order 1D filter
         s0, s1, s2 = mtGaussianDerivativeFilters1d(sigma)
 
-        # Paso 1: Suavizado Gaussiano
-        imagen_suavizada = cv2.GaussianBlur(inputImage, (5, 5), 0)
-
-        # Paso 2: Operador Sobel
-        gradiente_x = cv2.Sobel(imagen_suavizada, cv2.CV_64F, 1, 0, ksize=3)
-        gradiente_y = cv2.Sobel(imagen_suavizada, cv2.CV_64F, 0, 1, ksize=3)
-
-        # Calcular el módulo del gradiente
-        modulo_gradiente = np.sqrt(gradiente_x**2 + gradiente_y**2)
-
-        # Paso 3: Umbralización
-        umbral, bordes = cv2.threshold(modulo_gradiente, 30, 255, cv2.THRESH_BINARY)
-
-        # Definir el elemento estructural
-        elemento_estructural = np.ones((3, 3), np.uint8)
-
-        # Dilatar la imagen binaria
-        imagen_dilatada = cv2.dilate(bordes, elemento_estructural, iterations=1)
-
-        # Restar la imagen dilatada de la imagen binaria para obtener la frontera
-        fronteras = imagen_dilatada - bordes
-
-        L = cv2.Laplacian(fronteras, cv2.CV_64F, ksize=3)
-        Lx = cv2.Laplacian(fronteras, cv2.CV_64F, ksize=3)
-        Ly = cv2.Laplacian(fronteras, cv2.CV_64F, ksize=3)
-        Lxx = cv2.Laplacian(fronteras, cv2.CV_64F, ksize=3)
-        Lyy = cv2.Laplacian(fronteras, cv2.CV_64F, ksize=3)
-        Lxy = cv2.Laplacian(fronteras, cv2.CV_64F, ksize=3)
+        # Calculate 2D filter responses over the image using the 1D filters
+        # Pad extended boundary so filter response is same size as input
+        # image and pad boundary with reflected edge pixels
+        filterMode = "mirror"
+        # zeroth order filter
+        L = mtSeparableFilter2(s0, s0, inputImage, filterMode)
+        # first-order in x, zeroth in y
+        Lx = mtSeparableFilter2(s1, s0, inputImage, filterMode)
+        # first-order in y, zeroth in x
+        Ly = mtSeparableFilter2(s0, s1, inputImage, filterMode)
+        # second-order in x, zeroth in y
+        Lxx = mtSeparableFilter2(s2, s0, inputImage, filterMode)
+        # second-order in y, zeroth in x
+        Lyy = mtSeparableFilter2(s0, s2, inputImage, filterMode)
+        # first-order in x and y
+        Lxy = mtSeparableFilter2(s1, s1, inputImage, filterMode)
 
         return L, Lx, Ly, Lxx, Lyy, Lxy
 
