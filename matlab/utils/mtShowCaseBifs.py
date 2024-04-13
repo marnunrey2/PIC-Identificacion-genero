@@ -44,14 +44,12 @@ def mtShowCaseBifs(title_text, image, bifs, zoom_rows, zoom_cols):
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
 
     plt.imshow(image)
-    plt.plot(X, Y, color=[0, 1, 1])
     plt.xlabel("Test image")
 
     # Show BIF classes for whole image
     plt.subplot(1, 2, 2)
     bif_image = bifs.show()
     plt.imshow(bif_image)
-    plt.plot(X, Y, color=[0, 1, 1])
     plt.xlabel("BIF class for all pixels")
 
     plt.show()
