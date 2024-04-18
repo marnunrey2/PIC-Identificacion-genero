@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import cv2
-from .mtImShow import mtImShow
 
 
 def mtShowCaseBifs(title_text, image, bifs, zoom_rows, zoom_cols):
