@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import cv2
+import numpy as np
 
 
 def mtShowCaseBifs(title_text, image, bifs, zoom_rows, zoom_cols):
@@ -27,28 +28,33 @@ def mtShowCaseBifs(title_text, image, bifs, zoom_rows, zoom_cols):
     # Open figure
     plt.figure(title_text)
 
-    # Set bounding box for zoomed area
-    x_min = min(zoom_cols)
-    x_max = max(zoom_cols)
-    y_min = min(zoom_rows)
-    y_max = max(zoom_rows)
-    X = [x_min, x_min, x_max, x_max, x_min]
-    Y = [y_min, y_max, y_max, y_min, y_min]
-
     # Show test image
-    plt.subplot(1, 2, 1)
+    plt.subplot(2, 2, 1)
     num_dims = len(image.shape)
     if num_dims == 2:
-        # Convert greyscale image to RGB image
-        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-
+        # Convert greyscale image to BGR image
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     plt.imshow(image)
     plt.xlabel("Test image")
 
     # Show BIF classes for whole image
-    plt.subplot(1, 2, 2)
+    plt.subplot(2, 2, 2)
     bif_image = bifs.show()
     plt.imshow(bif_image)
     plt.xlabel("BIF class for all pixels")
+
+    # Show test image
+    plt.subplot(2, 2, 3)
+    plt.imshow(image[zoom_rows[:, np.newaxis], zoom_cols])
+    plt.xlabel("Image for zoomed area")
+
+    # Show BIF classes and orientation for zoomed pixel(s)
+    plt.subplot(2, 2, 4)
+    snippet = bifs.getSnippet(zoom_rows[:, np.newaxis], zoom_cols).show(
+        showOrientation=True
+    )
+    plt.imshow(snippet)
+    plt.xlabel("BIF class and orientation\nfor zoomed area")
 
     plt.show()
