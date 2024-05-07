@@ -14,27 +14,36 @@ def mtDemoBifLab():
     if im is None:
         print(f"Failed to load image ")
         return
-    bifs = mtBifs(im, 2, 0.015)
-    # mtShowCaseBifs("car", im, bifs, np.arange(450, 510), np.arange(580, 635))
-    # mtShowCaseBifs("car", im, bifs, np.arange(95, 120), np.arange(95, 120))
 
-    # Assuming 'bif_obj' is an instance of mtBifs class
-    histogram = bifs.generate_histogram()
+    # Define the different values of sigma and epsilon
+    sigma_values = [1, 2, 4, 8, 16]
+    epsilon_values = [0.1, 0.01, 0.001]
 
-    # Plot the histogram
+    # List to store all histograms
+    histograms = []
+
+    # Iterate over the different values of sigma and epsilon
+    for sigma in sigma_values:
+        for epsilon in epsilon_values:
+            bifs = mtBifs(im, sigma, epsilon)
+            histogram = bifs.generate_histogram()
+
+            # Add the histogram to the list
+            histograms.append(histogram)
+
+    # Concatenate all histograms into a single feature vector
+    feature_vector = np.concatenate(histograms)
+
+    # Plot the final concatenated histogram
     plt.figure(figsize=(8, 6))
-    plt.bar(range(len(histogram)), histogram, color="blue")
+    plt.bar(range(len(feature_vector)), feature_vector, color="blue")
     plt.xlabel("oBIF Bin")
     plt.ylabel("Frequency")
-    plt.title("oBIF Histogram")
-    plt.xticks(range(len(histogram)))
+    plt.title("Final Concatenated oBIF Histogram")
+    plt.xticks(range(len(feature_vector)))
     plt.grid(True)
-    plt.show()
 
-    # rounded_Vx = np.round(bifs.Vx, 1)
-    # unique, counts = np.unique(rounded_Vx, return_counts=True)
-    # counter = dict(zip(unique, counts))
-    # print(counter)
+    plt.show()
 
 
 # Example usage

@@ -291,71 +291,68 @@ class mtBifs:
         for row in range(self.Class.shape[0]):
             for col in range(self.Class.shape[1]):
                 # Determine the orientation bin index based on oBIF orientation and class
-                if self.Class[row, col] == 1:  # pink class
-                    continue
-                elif self.Class[row, col] == 2:  # Gray class
+                if self.Class[row, col] == 2:  # Gray class
                     orientation = (
                         np.arctan2(self.Vy[row, col], self.Vx[row, col]) / np.pi
                     )
-                    if orientation > 0.75:
-                        bin_index = 2  # 1st quadrant
-                    elif orientation > 0.5:
-                        bin_index = 3  # 2nd quadrant
-                    elif orientation > 0.25:
-                        bin_index = 4  # 3rd quadrant
-                    elif orientation > 0:
-                        bin_index = 5  # 4th quadrant
-                    elif orientation > -0.25:
-                        bin_index = 6  # 5th quadrant
-                    elif orientation > -0.5:
-                        bin_index = 7  # 6th quadrant
-                    elif orientation > -0.75:
-                        bin_index = 8  # 7th quadrant
+                    if 0.125 >= orientation > -0.125:
+                        bin_index = 1  # 1st quadrant
+                    elif 0.375 >= orientation > 0.125:
+                        bin_index = 2  # 2nd quadrant
+                    elif 0.625 >= orientation > 0.375:
+                        bin_index = 3  # 3rd quadrant
+                    elif 0.875 >= orientation > 0.625:
+                        bin_index = 4  # 4th quadrant
+                    elif -0.125 >= orientation > -0.375:
+                        bin_index = 8  # 8th quadrant
+                    elif -0.375 >= orientation > -0.625:
+                        bin_index = 7  # 7th quadrant
+                    elif -0.625 >= orientation > -0.875:
+                        bin_index = 6  # 6th quadrant
                     else:
-                        bin_index = 9  # 8th quadrant
+                        bin_index = 5  # 5th quadrant
                 elif self.Class[row, col] == 3:  # black class
-                    bin_index = 10
+                    bin_index = 9
                 elif self.Class[row, col] == 4:  # white class
-                    bin_index = 11
+                    bin_index = 10
                 elif self.Class[row, col] == 5:  # Blue class
                     orientation = (
                         np.arctan2(self.Vy[row, col], self.Vx[row, col]) / np.pi
                     )
-                    if orientation > 0.5:
-                        bin_index = 12  # 1st quadrant
-                    elif orientation > 0:
-                        bin_index = 13  # 2nd quadrant
-                    elif orientation > -0.5:
-                        bin_index = 14  # 3rd quadrant
+                    if 0.875 >= orientation > 0.625 or -0.125 >= orientation > -0.375:
+                        bin_index = 14  # 4th and 8th quadrant
+                    elif 0.625 >= orientation > 0.375 or -0.375 >= orientation > -0.625:
+                        bin_index = 13  # 3th and 7th quadrant
+                    elif 0.375 >= orientation > 0.125 or -0.625 >= orientation > -0.875:
+                        bin_index = 12  # 2nd and 6th quadrant
                     else:
-                        bin_index = 15  # 4th quadrant
+                        bin_index = 11  # 1st and 5th quadrant
                 elif self.Class[row, col] == 6:  # Yellow class
                     orientation = (
                         np.arctan2(self.Vy[row, col], self.Vx[row, col]) / np.pi
                     )
-                    print(orientation)
-                    if orientation > 0.5:
-                        bin_index = 16  # 1st quadrant
-                    elif orientation > 0:
-                        bin_index = 17  # 2nd quadrant
-                    elif orientation > -0.5:
-                        bin_index = 18  # 3rd quadrant
+                    if 0.875 >= orientation > 0.625 or -0.125 >= orientation > -0.375:
+                        bin_index = 18  # 4th and 8th quadrant
+                    elif 0.625 >= orientation > 0.375 or -0.375 >= orientation > -0.625:
+                        bin_index = 17  # 3th and 7th quadrant
+                    elif 0.375 >= orientation > 0.125 or -0.625 >= orientation > -0.875:
+                        bin_index = 16  # 2nd and 6th quadrant
                     else:
-                        bin_index = 19  # 4th quadrant
+                        bin_index = 15  # 1st and 5th quadrant
                 elif self.Class[row, col] == 7:  # Green class
                     orientation = (
                         np.arctan2(self.Vy[row, col], self.Vx[row, col]) / np.pi
                     )
-                    if orientation > 0.5:
-                        bin_index = 20  # 1st quadrant
-                    elif orientation > 0:
-                        bin_index = 21  # 2nd quadrant
-                    elif orientation > -0.5:
-                        bin_index = 22  # 3rd quadrant
+                    if 0.875 >= orientation > 0.625 or -0.125 >= orientation > -0.375:
+                        bin_index = 22  # 4th and 8th quadrant
+                    elif 0.625 >= orientation > 0.375 or -0.375 >= orientation > -0.625:
+                        bin_index = 21  # 3th and 7th quadrant
+                    elif 0.375 >= orientation > 0.125 or -0.625 >= orientation > -0.875:
+                        bin_index = 20  # 2nd and 6th quadrant
                     else:
-                        bin_index = 23  # 4th quadrant
-                else:  #  invalid classes
-                    bin_index = 0
+                        bin_index = 19  # 1st and 5th quadrant
+                else:  # invalid classes y pink class
+                    continue
 
                 # Increment the corresponding bin in the histogram
                 histogram[bin_index] += 1
