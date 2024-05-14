@@ -1,3 +1,10 @@
+# ¿Como ejecutar el código?
+
+**NOTE:** NO RECOMENDAMOS EJECUTAR EL CÓDIGO YA QUE TARDA MAS DE 10 HORAS. EL CÓDIGO YA ESTA EJECUTADO EN LA VERSIÓN SUBIDA Y PUEDE VERSE EL OUTPUT DE LAS CELDAS
+
+Simplemente abrir el archivo jupyter y hacer click en 'Run all'
+
+
 # NOTAS DEL PAPER DE oBIFs
 
 ## INTRODUCCION: 
