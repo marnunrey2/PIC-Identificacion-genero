@@ -18,8 +18,8 @@ Documentos que estudian lo mismo:
 - Hartley (1991) -> conventional features
 - Hayes (1996) -> impacto de las hormonas
 - Hamid & Loewenthal (1996) -> human analysts
--  Al-Maadeed & Hassaine, 2014; Bandi & Srihari, 2005; Liwicki et al., 
-2011; Siddiqi et al., 2012; Sokic et al., 2012 ) -> computerized analysis
+-  Al-Maadeed & Hassaine (2014); Bandi & Srihari (2005); Liwicki et al.
+(2011); Siddiqi et al. (2012); Sokic et al. (2012) -> computerized analysis
 - Liwicki et al. (2011) -> 67% accuracy
 - Bouadjenek, Nemmour and Chibani (2014) -> Histogram of Oriented Gradients (HOG) y Local Binary Paterns (LBP) applied with SVM -> 74% accuracy
 - Tabla pag 4
@@ -58,4 +58,3 @@ Documentos que estudian lo mismo:
 
 - Script-dependent evaluations -> usado en las competiciones mencionadas 
 - Script-independent evaluations -> es mas dificil, pero oBIFs es efectivo en encrontrar las caracteristicas comunes independientemente del script. Para hacerlo simplemente entrenas al SVM con arabic samples y haces el tests con english samples y luego al reves (el accuracy es menor obviamente)
-
