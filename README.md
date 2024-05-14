@@ -2,7 +2,7 @@
 
 **NOTE:** NO RECOMENDAMOS EJECUTAR EL CÓDIGO YA QUE TARDA MAS DE 10 HORAS. EL CÓDIGO YA ESTA EJECUTADO EN LA VERSIÓN SUBIDA Y PUEDE VERSE EL OUTPUT DE LAS CELDAS
 
-Simplemente abrir el archivo jupyter y hacer click en 'Run all'
+Si quiere ejecutarlo de todas formas, simplemente abra el archivo jupyter y haga click en 'Run all'
 
 
 # NOTAS DEL PAPER DE oBIFs
